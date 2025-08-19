@@ -60,7 +60,7 @@ Using Kali Linux, AWS CLI was configured with stolen access credentials. The att
 ```bash
 aws sts get-caller-identity
 
-```bash
+---
 
 This command is commonly used by adversaries to validate access and enumerate the AWS account.
 
