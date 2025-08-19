@@ -74,7 +74,7 @@ Edit
 }
 Once matched, the rule forwards the event to an SNS topic with email subscription(s).
 
-🚨 Alerting and Notification
+##🚨 Alerting and Notification
 Upon detection, SNS sends an email alert to the defender's inbox, including:
 
 API call details (eventName, accountId, sourceIPAddress)
