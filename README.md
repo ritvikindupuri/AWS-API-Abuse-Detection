@@ -60,20 +60,7 @@ aws sts get-caller-identity
 
 This command is commonly used by adversaries to validate access and enumerate the AWS account.
 
-Detection Rule
-
-The following EventBridge rule was created to detect unauthorized identity enumeration:
-
-{
-  "source": ["aws.sts"],
-  "detail-type": ["AWS API Call via CloudTrail"],
-  "detail": {
-    "eventName": ["GetCallerIdentity"]
-  }
-}
 
 
 
-```bash
-aws sts get-caller-identity
 
