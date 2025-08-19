@@ -1,5 +1,5 @@
 # AWS API Abuse Detection
-
+by: Ritvik Indupuri
 **Cloud-Native Detection Pipeline for Unauthorized AWS CLI Activity**  
 *Cloud Security | Detection Engineering | Blue Team | AWS-native Tools*
 
