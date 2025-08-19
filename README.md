@@ -58,8 +58,9 @@ Using Kali Linux, AWS CLI was configured with stolen access credentials. The att
 ```bash
 aws sts get-caller-identity
 
+This command is commonly used by adversaries to validate access and enumerate the AWS account.
 
-## Detection Rule
+Detection Rule
 
 The following EventBridge rule was created to detect unauthorized identity enumeration:
 
@@ -70,6 +71,8 @@ The following EventBridge rule was created to detect unauthorized identity enume
     "eventName": ["GetCallerIdentity"]
   }
 }
+
+
 
 ```bash
 aws sts get-caller-identity
