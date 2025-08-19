@@ -53,31 +53,7 @@ High-level architecture of a real-time detection system that identifies suspicio
 
 ---
 
-## Attack Simulation & Detection Rule
 
-Using Kali Linux, AWS CLI was configured with stolen access credentials. The attacker executed:
-
-```bash
-aws sts get-caller-identity
-This command is commonly used by adversaries to validate access and enumerate the AWS account.
-
-To detect this behavior, the following EventBridge rule was implemented to monitor and alert on unauthorized identity enumeration:
-
-json
-Copy
-Edit
-{
-  "source": ["aws.sts"],
-  "detail-type": ["AWS API Call via CloudTrail"],
-  "detail": {
-    "eventName": ["GetCallerIdentity"]
-  }
-}
-When the rule matches, it forwards the event to an SNS topic configured to send real-time email alerts to the cloud defender.
-
-yaml
-Copy
-Edit
 
 
 
