@@ -51,7 +51,7 @@ High-level architecture of a real-time detection system that identifies suspicio
 
 ---
 
-## 🧪 Attack Simulation
+## Attack Simulation
 
 Using Kali Linux, AWS CLI was configured with stolen access credentials. The attacker executed:
 
@@ -59,56 +59,65 @@ Using Kali Linux, AWS CLI was configured with stolen access credentials. The att
 aws sts get-caller-identity
 This command is commonly used by adversaries to validate access and enumerate the AWS account.
 
-##🚨 Alerting and Notification
-Upon detection, SNS sends an email alert to the defender's inbox, including:
+Detection Rule
+The following EventBridge rule was created to detect unauthorized identity enumeration:
+
+json
+Copy
+Edit
+{
+  "source": ["aws.sts"],
+  "detail-type": ["AWS API Call via CloudTrail"],
+  "detail": {
+    "eventName": ["GetCallerIdentity"]
+  }
+}
+Once matched, the rule forwards the event to an SNS topic with email subscription(s).
+
+EventBridge Rule Screenshot
+Attach a screenshot of your rule here
+
+Alerting and Notification
+Upon detection, SNS sends an email alert to the defender’s inbox. The alert includes:
 
 API call details (eventName, accountId, sourceIPAddress)
 
-A link to the CloudTrail log object in S3
+A reference to the CloudTrail log file in S3
 
-Timestamp and region metadata
+Region, timestamp, and metadata for context
 
-📸 End-to-End Workflow View
-This composite screenshot shows the entire flow—from attacker activity to analyst notification.
+End-to-End Workflow View
+This composite screenshot shows the full detection lifecycle — attacker API usage on the left, real-time alert on the right.
 
-Attach the composite image here
+Attach the combined screenshot here
 
-✅ Results
+Results
 Real-time detection of unauthorized API usage
 
-Email alert delivered within seconds of the triggering event
+Alert delivery within seconds of attacker activity
 
-Alert metadata matched correctly against CloudTrail logs
+Verified end-to-end traceability from attack to alert
 
-No third-party tools or services used—entirely AWS-native
+All components used are AWS-native (no third-party tools)
 
-💡 Skills Demonstrated
-Detection engineering using AWS-native services
+Skills Demonstrated
+Detection engineering with native AWS services
 
-SOC-style alert triage and log correlation
+SOC-style alert triage and incident validation
 
-Cloud threat simulation (TTP: credential abuse + enumeration)
+Threat simulation using attacker perspective (Kali + AWS CLI)
 
-Event-driven security architecture in AWS
+CloudTrail + S3 log analysis
 
-CloudTrail log analysis and validation
+Event-driven architecture design in AWS
 
-🔧 Opportunities for Future Enhancements
-Detect other suspicious API calls (CreateAccessKey, PassRole, etc.)
+Opportunities for Future Enhancements
+Detect additional suspicious APIs (CreateAccessKey, PassRole, etc.)
 
-Add automated remediation via AWS Lambda (e.g., disable key, tag IAM user)
+Add remediation actions (e.g., auto-disable keys via Lambda)
 
-Route alerts into a centralized SIEM (e.g., OpenSearch, Splunk)
+Centralize logs in OpenSearch or SIEM for advanced triage
 
-Visualize alerts in Grafana or CloudWatch dashboards
+Visualize alerts in CloudWatch or Grafana dashboards
 
-Integrate with SOAR platforms for full incident response playbooks
-
-
-👤 Author
-Ritvik Indupuri 
-Cloud Security | Detection Engineering | Blue Team Operations
-
-
-📎 License
-This project is open for learning and demonstration purposes only. All simulation performed in controlled, non-production AWS environments.
+Add multi-stage detection logic across services
