@@ -58,3 +58,19 @@ Using Kali Linux, AWS CLI was configured with stolen access credentials. The att
 ```bash
 aws sts get-caller-identity
 
+
+## Detection Rule
+
+The following EventBridge rule was created to detect unauthorized identity enumeration:
+
+{
+  "source": ["aws.sts"],
+  "detail-type": ["AWS API Call via CloudTrail"],
+  "detail": {
+    "eventName": ["GetCallerIdentity"]
+  }
+}
+
+```bash
+aws sts get-caller-identity
+
