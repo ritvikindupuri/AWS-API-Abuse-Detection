@@ -1,61 +1,58 @@
-# AWS API Abuse Detection
-**Cloud-Native Detection Pipeline for Unauthorized AWS CLI Activity**  
-*Cloud Security | Detection Engineering | Blue Team | AWS-native Tools*
+# Cloud Intrusion Detection & Alerting Pipeline (AWS Native)
 
-by: Ritvik Indupuri
+This project demonstrates a fully serverless, cloud-native intrusion detection and alerting pipeline built entirely on AWS. I simulated a common credential abuse scenario from a Kali Linux attack machine and successfully detected and alerted on the malicious activity in real time.
 
-
----
-
-## 📌 Project Overview
-
-This project simulates an AWS credential abuse scenario and demonstrates how to detect it using only **AWS-native services**. An attacker uses stolen credentials to perform identity enumeration via the AWS CLI. This behavior is captured and alerted in real time using **CloudTrail**, **EventBridge**, and **SNS**—with no third-party tools required.
-
-The goal: Build a production-ready detection pipeline that reflects real-world cloud security operations.
+The core of this project is its simplicity and power: no third-party tools, no agents to install—just clean, effective, and scalable infrastructure security using core AWS services, all within the Free Tier.
 
 ---
+## Threat Scenario & Detection Pipeline
 
-## 🎯 Objectives
+The pipeline was designed to detect an early-stage indicator of compromise: a threat actor using stolen credentials to perform basic reconnaissance. A common first step for an attacker is to validate the permissions of stolen keys using the `sts:GetCallerIdentity` API call.
 
-- Simulate a **cloud intrusion** using compromised AWS access keys
-- Detect suspicious API usage (`sts get-caller-identity`) via **CloudTrail**
-- Build a **real-time alerting pipeline** using EventBridge and SNS
-- Send structured email alerts to defenders
-- Validate alerts by analyzing log artifacts in S3
+My serverless pipeline detects this specific activity and triggers an immediate alert:
 
----
+1.  **Log Event:** An attacker makes a suspicious API call. AWS CloudTrail records this as a management event.
+2.  **Detection Trigger:** An Amazon EventBridge rule, with a custom event pattern, is constantly scanning the CloudTrail event stream. It is configured to match only the `sts:GetCallerIdentity` event.
+3.  **Alert Sent:** When the event is matched, EventBridge triggers its target, an Amazon SNS (Simple Notification Service) topic.
+4.  **Email Notification:** SNS immediately pushes the alert to all subscribed endpoints, in this case, sending an email to the security administrator.
 
-## 🛠️ Tools & Technologies
-
-| Technology     | Purpose                         |
-|----------------|----------------------------------|
-| AWS CLI        | Attacker simulation              |
-| Kali Linux     | Attacker host environment        |
-| CloudTrail     | API call logging                 |
-| EventBridge    | Detection logic / rule engine    |
-| Amazon SNS     | Email-based alerting             |
-| Amazon S3      | Log storage and validation       |
+<img src="./assets/Cloud Native alerting pipeline.jpg" width="800" alt="Cloud Native Intrusion Detection and Alerting Pipeline Diagram">
+*<p align="center">Figure 1: The end-to-end serverless detection and alerting pipeline.</p>*
 
 ---
+## Implementation & Configuration
 
-## 📐 Architecture
+The pipeline was constructed using three core AWS services.
 
-### Detection Flow
+### Step 1: Enabling the Data Source (AWS CloudTrail)
+The foundation of any detection capability is reliable logging. A multi-region AWS CloudTrail trail was enabled to ensure all management events across the account are captured and delivered for analysis.
 
-Attacker (AWS CLI) → CloudTrail → EventBridge → SNS → Email Alert
+<img src="./assets/CloudTrail Enablement.jpg" width="800" alt="Screenshot of AWS CloudTrail enabled">
+*<p align="center">Figure 2: A multi-region trail ("APITrail") actively logging all API events.</p>*
 
+### Step 2: Creating the Detection Logic (Amazon EventBridge)
+This is the brain of the pipeline. An EventBridge rule was created to filter the vast number of CloudTrail events for the specific recon activity. The event pattern below is configured to precisely match the `GetCallerIdentity` API call.
 
-### Figure 1 - Cloud Intrusion Detection & Alerting Pipeline (AWS Native)  
-_Attach your pipeline diagram here_  
-<img width="800" height="163" alt="image" src="https://github.com/user-attachments/assets/e063e6e4-3b0b-4d00-bf58-4f76f97db5b4" />
-
-High-level architecture of a real-time detection system that identifies suspicious AWS API calls using CloudTrail, EventBridge, and SNS. The pipeline triggers email alerts to notify users when attacker-like behavior (e.g., sts:GetCallerIdentity) is detected. Simulated attacker activity was generated using Kali Linux with stolen credentials.
+<img src="./assets/EventBridge GetCallerIdentity Rule.jpg" width="800" alt="Screenshot of the EventBridge rule and event pattern">
+*<p align="center">Figure 3: The EventBridge rule with the custom event pattern for detection.</p>*
 
 ---
+## End-to-End Test: Simulating the Attack
 
+To validate the pipeline, I used the AWS CLI from a Kali Linux environment with a set of (simulated) stolen credentials.
 
+The screenshot below captures the exact moment of the test. In the background, you can see the email inbox. Overlaid is the Kali terminal issuing the `aws sts get-caller-identity` command. Immediately upon execution, the email alerts from SNS began arriving, proving the pipeline's effectiveness in delivering real-time notifications.
 
+<img src="./assets/Real Time alert trigger.jpg" width="800" alt="Composite screenshot showing the attack command and the resulting email alerts">
+*<p align="center">Figure 4: The simulated attack from Kali Linux instantly triggering email alerts.</p>*
 
+---
+## 🚀 Skills & Technologies Demonstrated
 
-
-
+* **Cloud Security:** Designing and implementing detective controls for cloud environments.
+* **Intrusion Detection:** Using cloud-native services to detect indicators of compromise (IoCs) and reconnaissance TTPs (Tactics, Techniques, and Procedures).
+* **AWS CloudTrail:** Enabling and utilizing API logging for security monitoring and forensics.
+* **Amazon EventBridge:** Creating event-driven architectures and writing custom event patterns for fine-grained filtering.
+* **Amazon SNS:** Configuring automated alerting and notification systems.
+* **Threat Simulation:** Using offensive tools (Kali Linux) to validate the effectiveness of defensive controls.
+* **Serverless Architecture:** Building a scalable, cost-effective solution without managing any servers.
